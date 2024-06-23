@@ -22,7 +22,7 @@ public class Config {
         
         private Config() {
             this.propiedades= new Properties();
-            try (FileInputStream entrada = new FileInputStream("resources/conf/appconfig.properties")) {
+            try (FileInputStream entrada = new FileInputStream("source/conf/appconfig.properties")) {
                 propiedades.load(entrada);
                 this.nameFileCSV = propiedades.getProperty("app.file.name.csv");
                 this.principalColorR = propiedades.getProperty("gui.principal.color.r");

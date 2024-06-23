@@ -2,20 +2,16 @@ package co.edu.uptc.app.persistence;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
 import co.edu.uptc.app.model.Travel;
 import co.edu.uptc.app.view.PrincipalScreen;
 import co.edu.uptc.app.view.SecScreen;
 
-public class ManagementEvents implements ActionListener, FocusListener{
+public class ManagementEvents implements ActionListener{
 
     public static final String CALCULATE = "CALCULATE";
 
@@ -25,10 +21,8 @@ public class ManagementEvents implements ActionListener, FocusListener{
 
     private ManagementTravel managementTravel;
 
-    private FilePlain filePlain;
-    private PrincipalScreen ps;
-    private List<String> routes = new ArrayList<>();
-    private List<String> categories = new ArrayList<>();
+    private FilePlain filePlain = new FilePlain();
+    private PrincipalScreen ps = new PrincipalScreen();
     private String toll;
     private String price;
     private String distance;
@@ -136,60 +130,5 @@ public class ManagementEvents implements ActionListener, FocusListener{
     public void setDuration(String duration) {
         this.duration = duration;
     }
-
-    @Override
-    public void focusGained(FocusEvent e) {
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-        if (e.getSource() instanceof JTextField) {
-            loadRoute();
-        } else if (e.getSource() instanceof JComboBox) {
-            loadCategory();
-        }
-    }
-
-    private void loadRoute() {
-        String origin = ps.getiOrigin().getText();
-        String destination = ps.getiDestination().getText();
-        if (origin.isEmpty() || destination.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please fill in the origin and destination fields");
-        } else {
-            managementTravel.loadFile(filePlain.confValue.getPath().concat(filePlain.confValue.getNameFileCSV()));
-            List<Travel> dataFromFile = managementTravel.getListTravel();
-            routes.clear(); // Limpiar la lista de rutas antes de agregar nuevas
-            for (Travel row : dataFromFile) {
-                if (row.getOrigin().equals(origin) && row.getDestination().equals(destination)) {
-                    String route = row.getRoute(); // Asumo que la ruta se almacena en un campo llamado "route"
-                    if (!routes.contains(route)) {
-                        routes.add(route);
-                    }
-                }
-            }
-        }
-    }
-        
-
-    private void loadCategory() {
-        String origin = ps.getiOrigin().getText();
-        String destination = ps.getiDestination().getText();
-        String selectedRoute = (String) ps.getiRoute().getSelectedItem();
-        if (origin.isEmpty() || destination.isEmpty() || selectedRoute == null) {
-            JOptionPane.showMessageDialog(null, "Please fill in the origin, destination and route fields");
-        } else {
-            managementTravel.loadFile(filePlain.confValue.getPath().concat(filePlain.confValue.getNameFileCSV()));
-            List<Travel> dataFromFile = managementTravel.getListTravel();
-            categories.clear(); // Limpiar la lista de categorías antes de agregar nuevas
-            for (Travel row : dataFromFile) {
-                if (row.getOrigin().equals(origin) && row.getDestination().equals(destination) && row.getRoute().equals(selectedRoute)) {
-                    String category = row.getCategory(); 
-                    if (!categories.contains(category)) {
-                        categories.add(category);
-                    }
-                }
-            }
-        }
-    }   
-    
 }
+ 

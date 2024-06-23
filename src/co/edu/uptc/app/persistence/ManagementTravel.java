@@ -15,7 +15,10 @@ public class ManagementTravel extends FilePlain{
             this.listTravel = new ArrayList<>();
         }
         
-
+        public void addTravel(Travel travel) {
+            listTravel.add(travel);
+        }
+        
         public Travel findTravel(String origin, String destiny, String route, String category) {
             for(Travel travel: this.listTravel) {
                 if(travel.getOrigin().equals(origin) && travel.getDestination().equals(destiny) && travel.getRoute().equals(route) && travel.getCategory().equals(category)) {

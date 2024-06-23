@@ -6,16 +6,20 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import co.edu.uptc.app.persistence.ManagementEvents;
+import co.edu.uptc.app.model.Travel;
+import co.edu.uptc.app.persistence.FilePlain;
 import co.edu.uptc.app.persistence.ManagementTravel;
 
 
@@ -39,18 +43,19 @@ public class PrincipalScreen extends JFrame {
 	
 	private JComboBox<String> iRoute;
 	private JComboBox<String> iCategory;
-    private ManagementEvents me;
 	
 	
 	private JButton calculate;
+    private FilePlain filePlain;
 	
 	private SecScreen sc2;
 
 	public PrincipalScreen() {
+    this.mt = new ManagementTravel();
+    this.filePlain = new FilePlain();
 	this.setUpScreen();
 	this.buildComponents();
 	this.addComponents();
-	this.mt = new ManagementTravel();
 	}
 	
 	private void setUpScreen() {
@@ -77,8 +82,8 @@ public class PrincipalScreen extends JFrame {
 		this.iOrigin= new JTextField(30);
 		this.iDestination= new JTextField(30);
 		this.iRoute= new JComboBox<String>();
+        loadRoutes();
 		this.iCategory= new JComboBox<String>();
-		this.iRoute.addItem("Choose");
 		this.iCategory.addItem("Choose");
 		this.iRoute.setPreferredSize(new java.awt.Dimension(200, 30));
 	    this.iCategory.setPreferredSize(new java.awt.Dimension(200, 30));
@@ -93,19 +98,9 @@ public class PrincipalScreen extends JFrame {
 	        this.route.setFont(boldFont2);
 	        this.category.setFont(boldFont2);
 		
-		this.sc2 = new SecScreen();
-        this.me = new ManagementEvents();
-		
 	}
 	
-	@SuppressWarnings("static-access")
-    private void addComponents() {
-        this.iDestination.addFocusListener(me);
-
-        this.iRoute.addFocusListener(me);
-
-        this.calculate.setActionCommand(me.CALCULATE);
-        this.calculate.addActionListener(me);
+	private void addComponents() {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(5, 5, 5, 5);
 		gbc.gridx = 0;
@@ -180,7 +175,34 @@ public class PrincipalScreen extends JFrame {
         this.add(calculate, gbc);
     }
 
-			
+	private List<String> routes;
+
+    public void loadRoutes() {
+        
+        String origin = iOrigin.getText().trim();
+        String destination = iDestination.getText().trim();
+
+        if (origin.isEmpty() || destination.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter both origin and destination");
+            return;
+        }
+
+        List<Travel> routesList = mt.getListTravel();
+        routes = new ArrayList<>();
+
+        for (Travel route : routesList) {
+            if (!routes.contains(route.getRoute())) {
+                routes.add(route.getRoute());
+            }
+        }
+
+        iRoute.removeAllItems();
+        iRoute.addItem("Choose");
+        for (String route : routes) {
+            iRoute.addItem(route);
+        }
+    }
+	
 
 	public SecScreen getSc2() {
 		return sc2;
